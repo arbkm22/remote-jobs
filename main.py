@@ -6,18 +6,14 @@ from selenium.webdriver.common.by import By
 HASHNODE_URL = 'https://hashnode.crew.work/jobs'
 
 def createHashnodeMap(raw_jobs_list, jobs_dict):
-    temp_list = []
-    prev_job = ''
+    prev_job = None
     for raw_jobs in raw_jobs_list:
         if raw_jobs in jobs_dict:
-            print(f'{raw_jobs} is present')
-            jobs_dict[raw_jobs] = temp_list
-            temp_list = []
+            prev_job = raw_jobs
         else:
-            temp_list2 = jobs_dict.get(raw_jobs)
-            if temp_list2 is None:
-                temp_list.append(raw_jobs)
-    print(jobs_dict)
+            jobs_dict[prev_job].append(raw_jobs)
+
+    return jobs_dict
         
                 
 
@@ -54,7 +50,8 @@ def hashnode():
     
     # print(f'jobs_dict: {jobs_dict}')
     # print(f'perks: {perks}')
-    createHashnodeMap(raw_jobs_list, jobs_dict)
+    jobs_dict = createHashnodeMap(raw_jobs_list, jobs_dict)
+    print(f'Hashnode Jobs: {jobs_dict}')
 
 
 if __name__ == "__main__":
