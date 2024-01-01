@@ -19,6 +19,8 @@ def load_preference():
                 return {}
             else:
                 data = json.load(file_content)
+                print(f'json file: {data}')
+                print(f'json type: {type(data)}')
                 return data
     except FileNotFoundError:
         return {}
@@ -33,17 +35,30 @@ async def set_language(update: Update, context: CallbackContext):
     if (len(user_inputs) < 1):
         await update.message.reply_text("provide a language")
         return
-    user_id = update.message.from_user.id
+    user_id = str(update.message.from_user.id)
     preferences = load_preference()
-    preferences[user_id] = user_inputs
+    if user_id in preferences:
+        user_pref = preferences[user_id]
+        print(f'type of user_pref: {type(user_pref)}')
+        # user_pref_set = set(user_pref)
+        # print(f'user set in pref: {user_pref_set}')
+        # user_pref  = list(user_pref_set)
+        user_pref = user_pref + user_inputs
+        print(f'user id in preference file: {user_pref}')
+        preferences[user_id] = user_pref
+    else:
+        preferences[user_id] = user_inputs
+        print('user id not in preference file')
     save_preference(preferences)
     await update.message.reply_text(f'preferred language: {context.args[0]}')
 
 async def get_language(update: Update, context: CallbackContext):
-    user_id = update.message.from_user.id
+    user_id = str(update.message.from_user.id)
     preferences = load_preference()
+    print(f'get lang pref: {preferences}')
+    print(f'get_lang user id: {user_id}')
     language = preferences.get(user_id)
-
+    print(f'language: {language}')
     if language:
         await update.message.reply_text(f'preferred language: {language}')
     else:
