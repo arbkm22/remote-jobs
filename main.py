@@ -2,7 +2,7 @@ import os
 import json
 import logging
 from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, CallbackContext
+from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, CallbackContext, Updater
 from dotenv import load_dotenv
 
 from hashnode import hashnode
@@ -10,6 +10,9 @@ from hashnode import hashnode
 load_dotenv()
 TG_TOKEN = os.getenv('TOKEN')
 PREFERENCE_FILE = os.getenv('PREFERENCE_FILE', 'user_preference.json')
+
+# TODO: schedule the bot to run every day
+# TODO: send the users message
 
 def load_preference():
     try:
@@ -80,7 +83,7 @@ async def get_hashnode_jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def get_user_preference(): 
     print('get user preference')
 
-if __name__ == "__main__":
+def main() -> None:
     application = ApplicationBuilder().token(TG_TOKEN).build()
 
     # handlers
@@ -90,3 +93,6 @@ if __name__ == "__main__":
     application.add_handler(CommandHandler('get_lang', get_language))
 
     application.run_polling()
+
+if __name__ == "__main__":
+    main()
