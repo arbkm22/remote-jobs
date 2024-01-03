@@ -22,8 +22,6 @@ def load_preference():
                 return {}
             else:
                 data = json.load(file_content)
-                print(f'json file: {data}')
-                print(f'json type: {type(data)}')
                 return data
     except FileNotFoundError:
         return {}
@@ -80,8 +78,14 @@ async def get_hashnode_jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     jobs = hashnode()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=jobs)
 
-def get_user_preference(): 
-    print('get user preference')
+async def callback_alarm(context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_message(chat_id=context.job.chat_id, text=f'BEEP {context.job.data}')
+
+async def callback_timer(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.message.chat_id
+    name = update.effective_chat.full_name
+    await context.bot.send_message(chat_id=chat_id, text='Timer for 1 min')
+    context.job_queue.run_once(callback_alarm, 60, data=name, chat_id=chat_id)
 
 def main() -> None:
     application = ApplicationBuilder().token(TG_TOKEN).build()
@@ -91,6 +95,7 @@ def main() -> None:
     application.add_handler(CommandHandler('hashnode', get_hashnode_jobs))
     application.add_handler(CommandHandler('set_lang', set_language))
     application.add_handler(CommandHandler('get_lang', get_language))
+    application.add_handler(CommandHandler('timer', callback_timer))
 
     application.run_polling()
 
