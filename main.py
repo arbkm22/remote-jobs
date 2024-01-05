@@ -84,8 +84,8 @@ async def callback_alarm(context: ContextTypes.DEFAULT_TYPE):
 async def callback_timer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
     name = update.effective_chat.full_name
-    await context.bot.send_message(chat_id=chat_id, text='Timer for 1 min')
-    context.job_queue.run_once(callback_alarm, 60, data=name, chat_id=chat_id)
+    # 8 hours = 28800 seconds
+    context.job_queue.run_repeating(callback_alarm, interval=28800, first=1, data=name, chat_id=chat_id)
 
 def main() -> None:
     application = ApplicationBuilder().token(TG_TOKEN).build()
