@@ -32,25 +32,23 @@ def save_preference(preferences):
 
 async def set_user_pref(update: Update, context: CallbackContext):
     user_inputs = context.args
+    user_inputs = ' '.join(user_inputs)
     if (len(user_inputs) < 1):
-        await update.message.reply_text("provide a language")
+        await update.message.reply_text("Please provide a keyword")
         return
     user_id = str(update.message.from_user.id)
     preferences = load_preference()
+    user_pref_list = []
+    user_pref_list.append(user_inputs)
     if user_id in preferences:
         user_pref = preferences[user_id]
-        print(f'type of user_pref: {type(user_pref)}')
-        # user_pref_set = set(user_pref)
-        # print(f'user set in pref: {user_pref_set}')
-        # user_pref  = list(user_pref_set)
-        user_pref = user_pref + user_inputs
-        print(f'user id in preference file: {user_pref}')
+        user_pref = user_pref + user_pref_list
         preferences[user_id] = user_pref
     else:
-        preferences[user_id] = user_inputs
-        print('user id not in preference file')
+        preferences[user_id] = user_pref_list
     save_preference(preferences)
-    await update.message.reply_text(f'preferred language: {context.args[0]}')
+
+    await update.message.reply_text(f'Your set preferences: {preferences[user_id]}')
 
 def get_user_pref(user_id):
     preferences = load_preference()
@@ -93,10 +91,7 @@ async def callback_alarm(context: ContextTypes.DEFAULT_TYPE):
                     text=f'{lang} keyword found'
                 )
             else:
-                await context.bot.send_message(
-                    chat_id=context.job.chat_id,
-                    text='no keyword found'
-                )
+                print('no keyword found')
 
 async def callback_timer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
@@ -114,7 +109,7 @@ async def callback_timer(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def main() -> None:
     application = ApplicationBuilder().token(TG_TOKEN).build()
-
+ 
     # handlers
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('hashnode', get_hashnode_jobs))
