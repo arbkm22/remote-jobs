@@ -1,7 +1,7 @@
 import os
 import json
 import logging
-from telegram import Update
+from telegram import Update, ParseMode
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, CallbackContext, Updater
 from dotenv import load_dotenv
 import datetime
@@ -11,7 +11,7 @@ load_dotenv()
 TG_TOKEN = os.getenv('TOKEN')
 PREFERENCE_FILE = os.getenv('PREFERENCE_FILE', 'user_preference.json')
 
-# TODO: send the users message
+# TODO: remove user preference
 
 def load_preference():
     try:
@@ -47,8 +47,9 @@ async def set_user_pref(update: Update, context: CallbackContext):
     else:
         preferences[user_id] = user_pref_list
     save_preference(preferences)
-
-    await update.message.reply_text(f'Your set preferences: {preferences[user_id]}')
+    user_pref_str = ', '.join(preferences[user_id])
+    print(f'user_pref_str: {user_pref_str}')
+    await update.message.reply_text(f'Your set preferences: *{user_pref_str}*')
 
 def get_user_pref(user_id):
     preferences = load_preference()
@@ -63,7 +64,16 @@ logging.basicConfig(
 )
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Welcome to WFH Jobs Bot")
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id, 
+        text='''
+Welcome to WFH Jobs Bot.
+List of commands:
+*/pref*: Set New Preference.
+*/config*: List your saved preferences.
+*/sites*: List the sites which the bot is scraping.
+'''
+    )
 
 async def get_hashnode_jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
     jobs = hashnode()
@@ -72,11 +82,11 @@ async def get_hashnode_jobs(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def callback_alarm(context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=context.job.chat_id, text=f'BEEP {context.job.data}')
-    jobs = hashnode()
+    hashnode_jobs = hashnode()
     user_id = context.job.user_id
     print(f'user_id: {user_id}')
     langs = get_user_pref(user_id)
-    if jobs is None:
+    if hashnode_jobs is None:
         await context.bot.send_message(chat_id=context.job.chat_id, text='There are no jobs')
     elif langs is None:
         await context.bot.send_message(
@@ -85,10 +95,10 @@ async def callback_alarm(context: ContextTypes.DEFAULT_TYPE):
         )
     else:
         for lang in langs:
-            if lang in jobs:
+            if lang in hashnode_jobs:
                 await context.bot.send_message(
                     chat_id=context.job.chat_id,
-                    text=f'{lang} keyword found'
+                    text=f'{lang} role open in Hashnode'
                 )
             else:
                 print('no keyword found')
@@ -107,14 +117,28 @@ async def callback_timer(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id=user_id
     )
 
+async def config(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    pref = load_preference()
+    user_pref = pref[str(update.effective_chat.id)]
+    user_pref_str = "\n".join(user_pref)
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=f'''
+Your set preferences are: 
+
+*{user_pref_str}*
+''',
+        parse_mode=ParseMode.MARKDOWN
+    )
+
 def main() -> None:
     application = ApplicationBuilder().token(TG_TOKEN).build()
  
     # handlers
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('hashnode', get_hashnode_jobs))
-    application.add_handler(CommandHandler('set_pref', set_user_pref))
-    # application.add_handler(CommandHandler('get_pref', get_user_pref))
+    application.add_handler(CommandHandler('pref', set_user_pref))
+    application.add_handler(CommandHandler('config', config))
     application.add_handler(CommandHandler('timer', callback_timer))
 
     application.run_polling()
