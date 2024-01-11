@@ -1,7 +1,7 @@
 import os
 import json
 import logging
-from telegram import Update, ParseMode
+from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, CallbackContext, Updater
 from dotenv import load_dotenv
 import datetime
@@ -127,9 +127,34 @@ async def config(update: Update, context: ContextTypes.DEFAULT_TYPE):
 Your set preferences are: 
 
 *{user_pref_str}*
-''',
-        parse_mode=ParseMode.MARKDOWN
+'''
     )
+
+async def remove_pref(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_input = context.args
+    user_input = ' '.join(user_input)
+    pref = load_preference()
+    user_id = str(update.effective_chat.id)
+    user_pref = pref[user_id]
+    print(f'user pref: {user_pref}')
+    if user_input in user_pref:
+        user_pref.remove(user_input)
+        pref[user_id] = user_pref
+        save_preference(pref)
+        user_pref_str = '\n'.join(user_pref)
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=f'''
+{user_input} has been removed from your preferences.
+Your updated preferences are:
+{user_pref_str}
+'''
+        )
+    else:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=f'{user_input} not found in your preferences.'
+        )
 
 def main() -> None:
     application = ApplicationBuilder().token(TG_TOKEN).build()
@@ -140,6 +165,7 @@ def main() -> None:
     application.add_handler(CommandHandler('pref', set_user_pref))
     application.add_handler(CommandHandler('config', config))
     application.add_handler(CommandHandler('timer', callback_timer))
+    application.add_handler(CommandHandler('remove', remove_pref))
 
     application.run_polling()
 
