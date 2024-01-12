@@ -47,7 +47,8 @@ async def set_user_pref(update: Update, context: CallbackContext):
             print('present')
             await context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text=f'{user_inputs} is already present'
+                text=f'*{user_inputs}* is already present',
+                parse_mode=telegram.constants.ParseMode.MARKDOWN_V2
             )
         else:
             print('not present')
@@ -83,12 +84,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(
         chat_id=update.effective_chat.id, 
         text='''
-Welcome to WFH Jobs Bot.
+Welcome to WFH Jobs Bot
 List of commands:
-*/pref [keyword]*: Set New Preference.
-*/config*: List your saved preferences.
-*/sites*: List the sites which the bot is scraping.
-'''
+*/pref \{keyword\}*: Set New Preference
+*/config*: List your saved preferences
+*/sites*: List the sites which the bot is scraping
+*/remove \{keyword\}*: Remove keyword from your preferences
+''',
+        parse_mode=telegram.constants.ParseMode.MARKDOWN_V2
     )
 
 async def sites(update: Update, context: ContextTypes.DEFAULT_TYPE):
