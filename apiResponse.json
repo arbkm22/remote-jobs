@@ -1,0 +1,14 @@
+// * sample response for hashnode api
+// TODO : create a uniform response for multiple sites
+// TODO : think of more fields to add to the response
+{
+    "Growth Marketer": {
+        "company": "hashnode",
+        "website": "https://hashnode.crew.work/jobs",
+        "perks": [
+            "Permanent",
+            "Remote",
+            "Marketing"
+        ]
+    }
+}
