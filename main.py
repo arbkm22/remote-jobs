@@ -1,3 +1,4 @@
+import json
 from fastapi import FastAPI
 from hashnode import hashnode
 
@@ -8,10 +9,9 @@ async def root():
     return {"message": "hello, world!"}
 
 
-@app.get("/hashnode")
+@app.get("/hashnode", response_model=dict)
 async def hashnode_api():
     jobs = hashnode()
-    print(f'jobs in api: {jobs} | {type(jobs)}')
-    # return jobs
-    return {"message": "hashnode"}
+    jobs = json.dumps(jobs, indent=None)
+    return json.loads(jobs)
     
