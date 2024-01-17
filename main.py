@@ -11,14 +11,5 @@ async def root():
 @app.get("/hashnode", response_model=dict)
 async def hashnode_api():
     jobs = hashnode()
-    createHashnodeData(jobs)
     jobs = json.dumps(jobs, indent=None)
     return json.loads(jobs)
-    
-def createHashnodeData(job_data):
-    for key in job_data.keys():
-        job_data[key] = {
-            "company": "hashnode",
-            "website": "https://hashnode.crew.work/jobs",
-            "perks": job_data[key]
-        }

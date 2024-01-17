@@ -1,5 +1,5 @@
 import time
-from bs4 import BeautifulSoup
+import schedule
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
@@ -20,7 +20,6 @@ def hashnode():
     driver.get(HASHNODE_URL)
     time.sleep(3)
     page_source = driver.page_source
-    soup = BeautifulSoup(page_source, features="html.parser")
     jobs_li = driver.find_elements(By.CLASS_NAME, "jobs-list")
     jobs_list_names = driver.find_elements(By.CLASS_NAME, "job-item__name")
     jobs_name = []
@@ -32,7 +31,6 @@ def hashnode():
         jobs_string = item.text
 
     raw_jobs_list = jobs_string.split('\n')
-    # print(raw_jobs_list)
 
     jobs_dict = {}
     perks = []
@@ -46,8 +44,23 @@ def hashnode():
         else: 
             perks.append(string)
     
-    # print(f'jobs_dict: {jobs_dict}')
-    # print(f'perks: {perks}')
     jobs_dict = createHashnodeMap(raw_jobs_list, jobs_dict)
-
+    createHashnodeData(jobs_dict)
+    print(jobs_dict)
     return jobs_dict
+
+def createHashnodeData(job_data):
+    for key in job_data.keys():
+        job_data[key] = {
+            "company": "Hashnode",
+            "website": "https://hashnode.crew.work/jobs",
+            "perks": job_data[key]
+        }
+
+schedule.every(1).minutes.do(hashnode)
+# schedule.every(8).hours.do(hashnode)
+
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
