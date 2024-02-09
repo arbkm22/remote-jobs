@@ -26,7 +26,8 @@ def openplay():
             jobs_list.append(ele)
     
     job_map = createOpenplayMap(jobs_list)
-    print(f'job_map: {job_map}')
+    creteOpenplayData(job_map)
+    return job_map
 
 def createOpenplayMap(jobs_list):
     i = 1;
@@ -42,5 +43,13 @@ def createOpenplayMap(jobs_list):
 
     return jobs_map
 
-if __name__ == "__main__":
-    openplay()
+def creteOpenplayData(job_data):
+    for key in job_data.keys():
+        job_data[key] = {
+            "company": "Openplay",
+            "website": "https://openplay.co/careers/",
+            "perks": job_data[key]
+        }
+
+# if __name__ == "__main__":
+#     openplay()
