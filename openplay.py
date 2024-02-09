@@ -15,7 +15,6 @@ def openplay():
         if ('CURRENT POSITIONS' in job.text):
             jobs_element = job.text.split('\n')
 
-    # TODO: create map of the jobs
     job_map = {}
     jobs_list = []
     for ele in jobs_element:
@@ -26,9 +25,22 @@ def openplay():
         else:
             jobs_list.append(ele)
     
-    print(f'jobs: {jobs_list}')
+    job_map = createOpenplayMap(jobs_list)
+    print(f'job_map: {job_map}')
 
+def createOpenplayMap(jobs_list):
+    i = 1;
+    jobs_map = {}
+    for job in jobs_list:
+        if (i % 2 == 1):
+            jobs_map[job] = jobs_list[i]
+        i += 1
+    
+    for key in jobs_map:
+        val = list(jobs_map[key].split(","))
+        jobs_map[key] = val;
+
+    return jobs_map
 
 if __name__ == "__main__":
     openplay()
-    
