@@ -14,11 +14,6 @@ def instagram():
     jobs = ""
     jobs_li = []
 
-    locations = []
-    duration = ""
-    position = ""
-    tags = []
-
     for item in jobs_list_div:
         jobs += item.text
         jobs_li.append(item.text.split('\n'))
@@ -27,29 +22,16 @@ def instagram():
 
     for item in jobs_li:
         temp_li = []
-        duration = item[0]
-        locations = item[1].split('|')
         pos = item[2].split(',')
         position = pos[0]
         tags = pos[1:]
-        temp_li.append(duration)
-        temp_li.append(locations)
+        temp_li.append(item[0])
+        temp_li.append(item[1].split('|'))
         temp_li.append(tags)
         job_data[position] = temp_li
         
-        # print(f'duration: {duration} | locs: {locations} | pos: {position}')
-    # print(f'job_data: {job_data}')
-    # job_data = createIgMap(duration, locations, position, tags)
     job_data = createInstagramData(job_data)
-    print(f'job_data: {job_data}')
-
-def createIgMap(duration, locations, position, tags):
-    igMap = {}
-    igMap['duration'] = duration
-    igMap['locations'] = locations
-    igMap['position'] = position
-    igMap['tags'] = tags
-    return igMap
+    return job_data
     
 def createInstagramData(job_data):
     print(f'job_data: {job_data}')
