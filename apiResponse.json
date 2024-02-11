@@ -5,10 +5,30 @@
     "Growth Marketer": {
         "company": "hashnode",
         "website": "https://hashnode.crew.work/jobs",
-        "perks": [
-            "Permanent",
-            "Remote",
-            "Marketing"
+        // "perks": [
+        //     "Permanent",
+        //     "Remote",
+        //     "Marketing"
+        // ],
+        "duration": "Full Time | Permanent", // perks[0]
+        "locations": [
+            "Remote" // perks[1]
+        ],
+        "tags": [
+            "Marketing" // perks[2]
+        ]
+    },
+    "Creative Producer": {
+        "company": "instagram",
+        "website": "https://hashnode.crew.work/jobs",
+        "duration": "Full Time | Permanent",
+        "locations": [
+            "Menlo Park, CA",
+            "New York, NY",
+            "San Francisco, CA"
+        ],
+        "tags": [
+            "@design"
         ]
     }
 }
