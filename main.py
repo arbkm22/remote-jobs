@@ -2,6 +2,7 @@ import json
 from fastapi import FastAPI
 from hashnode import hashnode
 from openplay import openplay
+from instagram import instagram
 
 app = FastAPI()
 
@@ -19,4 +20,10 @@ async def hashnode_api():
 async def openplay_api():
     openplay_jobs = openplay()
     jobs = json.dumps(openplay_jobs, indent=None)
+    return json.loads(jobs)
+
+@app.get("/instagram", response_model=dict)
+async def instagram_api():
+    ig_jobs = instagram()
+    jobs = json.dumps(ig_jobs, indent=None)
     return json.loads(jobs)
