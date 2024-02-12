@@ -34,7 +34,6 @@ def instagram():
     return job_data
     
 def createInstagramData(job_data):
-    print(f'job_data: {job_data}')
     job_mod = {}
     for key in job_data.keys():
         job_mod[key] = {

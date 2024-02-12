@@ -45,10 +45,15 @@ def createOpenplayMap(jobs_list):
 
 def creteOpenplayData(job_data):
     for key in job_data.keys():
+        tags = []
+        if (len(job_data[key]) > 2):
+            tags = job_data[key][2]
         job_data[key] = {
             "company": "Openplay",
-            "website": "https://openplay.co/careers/",
-            "perks": job_data[key]
+            "website": OPENPLAY_URL,
+            "duration": job_data[key][0],
+            "locations": job_data[key][1],
+            "tags": tags
         }
 
 # if __name__ == "__main__":

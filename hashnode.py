@@ -46,7 +46,6 @@ def hashnode():
     
     jobs_dict = createHashnodeMap(raw_jobs_list, jobs_dict)
     createHashnodeData(jobs_dict)
-    print(jobs_dict)
     return jobs_dict
 
 def createHashnodeData(job_data):
@@ -54,7 +53,9 @@ def createHashnodeData(job_data):
         job_data[key] = {
             "company": "Hashnode",
             "website": "https://hashnode.crew.work/jobs",
-            "perks": job_data[key]
+            "duration": job_data[key][0],
+            "locations": job_data[key][1],
+            "tags": job_data[key][2]
         }
 
 schedule.every(1).minutes.do(hashnode)
